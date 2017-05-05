@@ -46,3 +46,5 @@ youtube-dl.zsh
 *.iml
 
 tmp/
+venv/
+test_with_downloaded_webpage.py

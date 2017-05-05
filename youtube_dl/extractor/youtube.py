@@ -1284,7 +1284,9 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
 
         # Get video webpage
         url = proto + '://www.youtube.com/watch?v=%s&gl=US&hl=en&has_verified=1&bpctr=9999999999' % video_id
-        video_webpage = self._download_webpage(url, video_id)
+        video_webpage = self._downloader.params['videoWebPage'] if 'videoWebPage' in self._downloader.params else None
+        if video_webpage is None:
+            video_webpage = self._download_webpage(url, video_id)
 
         # Attempt to extract SWF player URL
         mobj = re.search(r'swfConfig.*?"(https?:\\/\\/.*?watch.*?-.*?\.swf)"', video_webpage)
