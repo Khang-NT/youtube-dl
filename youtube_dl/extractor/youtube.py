@@ -1465,10 +1465,12 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                     video_info_url = (
                         '%s://www.youtube.com/get_video_info?&video_id=%s%s&ps=default&eurl=&gl=US&hl=en'
                         % (proto, video_id, el_type))
-                    video_info_webpage = self._download_webpage(
-                        video_info_url,
-                        video_id, note=False,
-                        errnote='unable to download video info webpage')
+                    video_info_webpage = self._downloader.params[el_type] if el_type in self._downloader.params else None
+                    if video_info_webpage is None:
+                        video_info_webpage = self._download_webpage(
+                            video_info_url,
+                            video_id, note=False,
+                            errnote='unable to download video info webpage')
                     get_video_info = compat_parse_qs(video_info_webpage)
                     if get_video_info.get('use_cipher_signature') != ['True']:
                         add_dash_mpd(get_video_info)
