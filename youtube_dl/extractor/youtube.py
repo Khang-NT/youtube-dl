@@ -1805,22 +1805,48 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                 formats.append(dct)
         elif video_info.get('hlsvp'):
             manifest_url = video_info['hlsvp'][0]
-            formats = []
-            m3u8_formats = self._extract_m3u8_formats(
-                manifest_url, video_id, 'mp4', fatal=False)
-            for a_format in m3u8_formats:
-                itag = self._search_regex(
-                    r'/itag/(\d+)/', a_format['url'], 'itag', default=None)
-                if itag:
-                    a_format['format_id'] = itag
-                    if itag in self._formats:
-                        dct = self._formats[itag].copy()
-                        dct.update(a_format)
-                        a_format = dct
-                a_format['player_url'] = player_url
-                # Accept-Encoding header causes failures in live streams on Youtube and Youtube Gaming
-                a_format.setdefault('http_headers', {})['Youtubedl-no-compression'] = 'True'
-                formats.append(a_format)
+            formats = [{
+              "format": "91 - 256x144 (HLS)",
+              "abr": 48,
+              "tbr": 197.4,
+              "http_headers": {
+                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:10.0) Gecko/20150101 Firefox/47.0 (Chrome)",
+                "Accept-Language": "en-us,en;q=0.5",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Youtubedl-no-compression": "True",
+                "Accept-Encoding": "gzip, deflate",
+                "Accept-Charset": "ISO-8859-1,utf-8;q=0.7,*;q=0.7"
+              },
+              "manifest_url": manifest_url,
+              "width": 256,
+              "preference": None,
+              "protocol": "m3u8",
+              "acodec": "mp4a.40.5",
+              "ext": "mp4",
+              "player_url": None,
+              "url": manifest_url,
+              "height": 144,
+              "fps": None,
+              "format_id": "91",
+              "vcodec": "avc1.42c00b",
+              "format_note": "HLS"
+            }]
+            print("Detect m3u8 manifest:", manifest_url)
+            # m3u8_formats = self._extract_m3u8_formats(
+            #     manifest_url, video_id, 'mp4', fatal=False)
+            # for a_format in m3u8_formats:
+            #     itag = self._search_regex(
+            #         r'/itag/(\d+)/', a_format['url'], 'itag', default=None)
+            #     if itag:
+            #         a_format['format_id'] = itag
+            #         if itag in self._formats:
+            #             dct = self._formats[itag].copy()
+            #             dct.update(a_format)
+            #             a_format = dct
+            #     a_format['player_url'] = player_url
+            #     Accept-Encoding header causes failures in live streams on Youtube and Youtube Gaming
+            #     a_format.setdefault('http_headers', {})['Youtubedl-no-compression'] = 'True'
+            #     formats.append(a_format)
         else:
             unavailable_message = self._html_search_regex(
                 r'(?s)<h1[^>]+id="unavailable-message"[^>]*>(.+?)</h1>',
