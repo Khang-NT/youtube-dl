@@ -251,7 +251,10 @@ from .democracynow import DemocracynowIE
 from .dfb import DFBIE
 from .dhm import DHMIE
 from .dotsub import DotsubIE
-from .douyutv import DouyuTVIE
+from .douyutv import (
+    DouyuShowIE,
+    DouyuTVIE,
+)
 from .dplay import (
     DPlayIE,
     DPlayItIE,
@@ -350,9 +353,9 @@ from .foxsports import FoxSportsIE
 from .franceculture import FranceCultureIE
 from .franceinter import FranceInterIE
 from .francetv import (
-    PluzzIE,
-    FranceTvInfoIE,
     FranceTVIE,
+    FranceTVEmbedIE,
+    FranceTVInfoIE,
     GenerationQuoiIE,
     CultureboxIE,
 )
@@ -663,6 +666,7 @@ from .nintendo import NintendoIE
 from .njpwworld import NJPWWorldIE
 from .nobelprize import NobelPrizeIE
 from .noco import NocoIE
+from .nonktube import NonkTubeIE
 from .noovo import NoovoIE
 from .normalboots import NormalbootsIE
 from .nosvideo import NosVideoIE
