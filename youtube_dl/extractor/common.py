@@ -2001,6 +2001,12 @@ class InfoExtractor(object):
             compat_etree_fromstring(ism.encode('utf-8')), urlh.geturl(), ism_id)
 
     def _parse_ism_formats(self, ism_doc, ism_url, ism_id=None):
+        """
+        Parse formats from ISM manifest.
+        References:
+         1. [MS-SSTR]: Smooth Streaming Protocol,
+            https://msdn.microsoft.com/en-us/library/ff469518.aspx
+        """
         if ism_doc.get('IsLive') == 'TRUE' or ism_doc.find('Protection') is not None:
             return []
 
@@ -2022,8 +2028,11 @@ class InfoExtractor(object):
                     self.report_warning('%s is not a supported codec' % fourcc)
                     continue
                 tbr = int(track.attrib['Bitrate']) // 1000
-                width = int_or_none(track.get('MaxWidth'))
-                height = int_or_none(track.get('MaxHeight'))
+                # [1] does not mention Width and Height attributes. However,
+                # they're often present while MaxWidth and MaxHeight are
+                # missing, so should be used as fallbacks
+                width = int_or_none(track.get('MaxWidth') or track.get('Width'))
+                height = int_or_none(track.get('MaxHeight') or track.get('Height'))
                 sampling_rate = int_or_none(track.get('SamplingRate'))
 
                 track_url_pattern = re.sub(r'{[Bb]itrate}', track.attrib['Bitrate'], url_pattern)
@@ -2196,8 +2205,9 @@ class InfoExtractor(object):
 
     def _extract_wowza_formats(self, url, video_id, m3u8_entry_protocol='m3u8_native', skip_protocols=[]):
         url = re.sub(r'/(?:manifest|playlist|jwplayer)\.(?:m3u8|f4m|mpd|smil)', '', url)
-        url_base = self._search_regex(r'(?:https?|rtmp|rtsp)(://[^?]+)', url, 'format url')
-        http_base_url = 'http' + url_base
+        url_base = self._search_regex(
+            r'(?:(?:https?|rtmp|rtsp):)?(//[^?]+)', url, 'format url')
+        http_base_url = '%s:%s' % ('http', url_base)
         formats = []
         if 'm3u8' not in skip_protocols:
             formats.extend(self._extract_m3u8_formats(
@@ -2231,7 +2241,7 @@ class InfoExtractor(object):
             for protocol in ('rtmp', 'rtsp'):
                 if protocol not in skip_protocols:
                     formats.append({
-                        'url': protocol + url_base,
+                        'url': '%s:%s' % (protocol, url_base),
                         'format_id': protocol,
                         'protocol': protocol,
                     })

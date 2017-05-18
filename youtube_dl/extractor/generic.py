@@ -88,6 +88,8 @@ from .rutube import RutubeIE
 from .limelight import LimelightBaseIE
 from .anvato import AnvatoIE
 from .washingtonpost import WashingtonPostIE
+from .wistia import WistiaIE
+from .mediaset import MediasetIE
 
 
 class GenericIE(InfoExtractor):
@@ -1718,6 +1720,19 @@ class GenericIE(InfoExtractor):
             },
             'add_ie': [WashingtonPostIE.ie_key()],
         },
+        {
+            # Mediaset embed
+            'url': 'http://www.tgcom24.mediaset.it/politica/serracchiani-voglio-vivere-in-una-societa-aperta-reazioni-sproporzionate-_3071354-201702a.shtml',
+            'info_dict': {
+                'id': '720642',
+                'ext': 'mp4',
+                'title': 'Serracchiani: "Voglio vivere in una società aperta, con tutela del patto di fiducia"',
+            },
+            'params': {
+                'skip_download': True,
+            },
+            'add_ie': [MediasetIE.ie_key()],
+        },
         # {
         #     # TODO: find another test
         #     # http://schema.org/VideoObject
@@ -2111,56 +2126,19 @@ class GenericIE(InfoExtractor):
                     playlists, video_id, video_title, lambda p: '//dailymotion.com/playlist/%s' % p)
 
         # Look for embedded Wistia player
-        match = re.search(
-            r'<(?:meta[^>]+?content|iframe[^>]+?src)=(["\'])(?P<url>(?:https?:)?//(?:fast\.)?wistia\.net/embed/iframe/.+?)\1', webpage)
-        if match:
-            embed_url = self._proto_relative_url(
-                unescapeHTML(match.group('url')))
+        wistia_url = WistiaIE._extract_url(webpage)
+        if wistia_url:
             return {
                 '_type': 'url_transparent',
-                'url': embed_url,
-                'ie_key': 'Wistia',
+                'url': self._proto_relative_url(wistia_url),
+                'ie_key': WistiaIE.ie_key(),
                 'uploader': video_uploader,
             }
-
-        match = re.search(r'(?:id=["\']wistia_|data-wistia-?id=["\']|Wistia\.embed\(["\'])(?P<id>[^"\']+)', webpage)
-        if match:
-            return {
-                '_type': 'url_transparent',
-                'url': 'wistia:%s' % match.group('id'),
-                'ie_key': 'Wistia',
-                'uploader': video_uploader,
-            }
-
-        match = re.search(
-            r'''(?sx)
-                <script[^>]+src=(["'])(?:https?:)?//fast\.wistia\.com/assets/external/E-v1\.js\1[^>]*>.*?
-                <div[^>]+class=(["']).*?\bwistia_async_(?P<id>[a-z0-9]+)\b.*?\2
-            ''', webpage)
-        if match:
-            return self.url_result(self._proto_relative_url(
-                'wistia:%s' % match.group('id')), 'Wistia')
 
         # Look for SVT player
         svt_url = SVTIE._extract_url(webpage)
         if svt_url:
             return self.url_result(svt_url, 'SVT')
-
-        # Look for embedded condenast player
-        matches = re.findall(
-            r'<iframe\s+(?:[a-zA-Z-]+="[^"]+"\s+)*?src="(https?://player\.cnevids\.com/embed/[^"]+")',
-            webpage)
-        if matches:
-            return {
-                '_type': 'playlist',
-                'entries': [{
-                    '_type': 'url',
-                    'ie_key': 'CondeNast',
-                    'url': ma,
-                } for ma in matches],
-                'title': video_title,
-                'id': video_id,
-            }
 
         # Look for Bandcamp pages with custom domain
         mobj = re.search(r'<meta property="og:url"[^>]*?content="(.*?bandcamp\.com.*?)"', webpage)
@@ -2555,29 +2533,6 @@ class GenericIE(InfoExtractor):
             return self.playlist_result(
                 limelight_urls, video_id, video_title, video_description)
 
-        mobj = re.search(r'LimelightPlayer\.doLoad(Media|Channel|ChannelList)\(["\'](?P<id>[a-z0-9]{32})', webpage)
-        if mobj:
-            lm = {
-                'Media': 'media',
-                'Channel': 'channel',
-                'ChannelList': 'channel_list',
-            }
-            return self.url_result(smuggle_url('limelight:%s:%s' % (
-                lm[mobj.group(1)], mobj.group(2)), {'source_url': url}),
-                'Limelight%s' % mobj.group(1), mobj.group(2))
-
-        mobj = re.search(
-            r'''(?sx)
-                <object[^>]+class=(["\'])LimelightEmbeddedPlayerFlash\1[^>]*>.*?
-                    <param[^>]+
-                        name=(["\'])flashVars\2[^>]+
-                        value=(["\'])(?:(?!\3).)*mediaId=(?P<id>[a-z0-9]{32})
-            ''', webpage)
-        if mobj:
-            return self.url_result(smuggle_url(
-                'limelight:media:%s' % mobj.group('id'),
-                {'source_url': url}), 'LimelightMedia', mobj.group('id'))
-
         # Look for Anvato embeds
         anvato_urls = AnvatoIE._extract_urls(self, webpage, video_id)
         if anvato_urls:
@@ -2706,6 +2661,12 @@ class GenericIE(InfoExtractor):
         if wapo_urls:
             return self.playlist_from_matches(
                 wapo_urls, video_id, video_title, ie=WashingtonPostIE.ie_key())
+
+        # Look for Mediaset embeds
+        mediaset_urls = MediasetIE._extract_urls(webpage)
+        if mediaset_urls:
+            return self.playlist_from_matches(
+                mediaset_urls, video_id, video_title, ie=MediasetIE.ie_key())
 
         # Looking for http://schema.org/VideoObject
         json_ld = self._search_json_ld(
