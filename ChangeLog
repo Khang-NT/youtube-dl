@@ -1,3 +1,28 @@
+version 2017.05.18.1
+
+Core
+* [jsinterp] Fix typo and cleanup regular expressions (#13134)
+
+
+version 2017.05.18
+
+Core
++ [jsinterp] Add support for quoted names and indexers (#13123, #13124, #13125,
+  #13126, #13128, #13129, #13130, #13131, #13132)
++ [extractor/common] Add support for schemeless URLs in _extract_wowza_formats
+  (#13088, #13092)
++ [utils] Recognize more audio codecs (#13081)
+
+Extractors
++ [vier] Extract more metadata (#12539)
+* [vier] Improve extraction (#12801)
+    + Add support for authentication
+    * Bypass authentication when no credentials provided
+    * Improve extraction robustness
+* [dailymail] Fix sources extraction (#13057)
+* [dailymotion] Extend URL regular expression (#13079)
+
+
 version 2017.05.14
 
 Core
@@ -5,7 +30,7 @@ Core
 + [postprocessor/metadatafromtitle] Add support regular expression syntax for
   --metadata-from-title (#13065)
 
-Extractor
+Extractors
 + [mediaset] Add support for video.mediaset.it (#12708, #12964)
 * [orf:radio] Fix extraction (#11643, #12926)
 * [aljazeera] Extend URL regular expression (#13053)
