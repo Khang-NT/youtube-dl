@@ -1477,7 +1477,7 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                         query['sts'] = sts
                     el_type = '&el=%s' % el
                     video_info_webpage = self._downloader.params[el_type] if el_type in self._downloader.params else None
-                    if not video_info_webpage:
+                    if 'videoWebPage' not in self._downloader.params:
                         video_info_webpage = self._download_webpage(
                             '%s://www.youtube.com/get_video_info' % proto,
                             video_id, note=False,
