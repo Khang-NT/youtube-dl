@@ -1437,6 +1437,7 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
         else:
             age_gate = False
             video_info = None
+            sts = None
             # Try looking directly into the video webpage
             ytplayer_config = self._get_ytplayer_config(video_id, video_webpage)
             if ytplayer_config:
@@ -1453,6 +1454,7 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                         args['ypc_vid'], YoutubeIE.ie_key(), video_id=args['ypc_vid'])
                 if args.get('livestream') == '1' or args.get('live_playback') == 1:
                     is_live = True
+                sts = ytplayer_config.get('sts')
             if not video_info or self._downloader.params.get('youtube_include_dash_manifest', True):
                 # We also try looking in get_video_info since it may contain different dashmpd
                 # URL that points to a DASH manifest with possibly different itag set (some itags
@@ -1461,19 +1463,30 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                 # The general idea is to take a union of itags of both DASH manifests (for example
                 # video with such 'manifest behavior' see https://github.com/rg3/youtube-dl/issues/6093)
                 self.report_video_info_webpage_download(video_id)
-                for el_type in ['&el=info', '&el=embedded', '&el=detailpage', '&el=vevo', '']:
-                    video_info_url = (
-                        '%s://www.youtube.com/get_video_info?&video_id=%s%s&ps=default&eurl=&gl=US&hl=en'
-                        % (proto, video_id, el_type))
+                for el in ('info', 'embedded', 'detailpage', 'vevo', ''):
+                    query = {
+                        'video_id': video_id,
+                        'ps': 'default',
+                        'eurl': '',
+                        'gl': 'US',
+                        'hl': 'en',
+                    }
+                    if el:
+                        query['el'] = el
+                    if sts:
+                        query['sts'] = sts
+                    el_type = '&el=%s' % el
                     video_info_webpage = self._downloader.params[el_type] if el_type in self._downloader.params else None
-                    if video_info_webpage is None:
+                    if not video_info_webpage:
                         video_info_webpage = self._download_webpage(
-                            video_info_url,
+                            '%s://www.youtube.com/get_video_info' % proto,
                             video_id, note=False,
-                            errnote='unable to download video info webpage')
+                            errnote='unable to download video info webpage',
+                            fatal=False, query=query)
+                    if not video_info_webpage:
+                        continue
                     get_video_info = compat_parse_qs(video_info_webpage)
-                    if get_video_info.get('use_cipher_signature') != ['True']:
-                        add_dash_mpd(get_video_info)
+                    add_dash_mpd(get_video_info)
                     if not video_info:
                         video_info = get_video_info
                     if 'token' in get_video_info:

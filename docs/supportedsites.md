@@ -803,16 +803,13 @@
  - **ToonGoggles**
  - **Tosh**: Tosh.0
  - **tou.tv**
- - **Toypics**: Toypics user profile
+ - **Toypics**: Toypics video
  - **ToypicsUser**: Toypics user profile
  - **TrailerAddict** (Currently broken)
  - **Trilulilu**
  - **TruTV**
  - **Tube8**
  - **TubiTv**
- - **tudou**
- - **tudou:album**
- - **tudou:playlist**
  - **Tumblr**
  - **tunein:clip**
  - **tunein:program**

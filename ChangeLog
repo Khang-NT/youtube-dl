@@ -1,3 +1,42 @@
+version <unreleased>
+
+Extractors
++ [youku] Extract more metadata (#10433)
+
+
+version 2017.05.26
+
+Core
++ [utils] strip_jsonp() can recognize more patterns
+* [postprocessor/ffmpeg] Fix metadata filename handling on Python 2 (#13182)
+
+Extractors
++ [youtube] DASH MPDs with cipher signatures are recognized now (#11381)
++ [bbc] Add support for authentication
+* [tudou] Merge into youku extractor (#12214)
+* [youku:show] Fix extraction
+* [youku] Fix extraction (#13191)
+* [udemy] Fix extraction for outputs' format entries without URL (#13192)
+* [vimeo] Fix formats' sorting (#13189)
+* [cbsnews] Fix extraction for 60 Minutes videos (#12861)
+
+
+version 2017.05.23
+
+Core
++ [downloader/external] Pass -loglevel to ffmpeg downloader (#13183)
++ [adobepass] Add support for Bright House Networks (#13149)
+
+Extractors
++ [streamcz] Add support for subtitles (#13174)
+* [youtube] Fix DASH manifest signature decryption (#8944, #13156)
+* [toggle] Relax URL regular expression (#13172)
+* [toypics] Fix extraction (#13077)
+* [njpwworld] Fix extraction (#13162, #13169)
++ [hitbox] Add support for smashcast.tv (#13154)
+* [mitele] Update app key regular expression (#13158)
+
+
 version 2017.05.18.1
 
 Core
