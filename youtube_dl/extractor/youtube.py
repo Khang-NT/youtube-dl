@@ -1477,7 +1477,7 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                         query['sts'] = sts
                     el_type = '&el=%s' % el
                     video_info_webpage = self._downloader.params[el_type] if el_type in self._downloader.params else None
-                    if 'videoWebPage' not in self._downloader.params:
+                    if ('videoWebPage' not in self._downloader.params) or (not self._downloader.params['videoWebPage']):
                         video_info_webpage = self._download_webpage(
                             '%s://www.youtube.com/get_video_info' % proto,
                             video_id, note=False,
@@ -1502,8 +1502,8 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                         if 'token' not in video_info:
                             video_info = get_video_info
                         break
-        if 'token' not in video_info:
-            if 'reason' in video_info:
+        if not video_info or 'token' not in video_info:
+            if video_info and ('reason' in video_info):
                 if 'The uploader has not made this video available in your country.' in video_info['reason']:
                     regions_allowed = self._html_search_meta(
                         'regionsAllowed', video_webpage, default=None)
