@@ -1455,7 +1455,9 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                 if args.get('livestream') == '1' or args.get('live_playback') == 1:
                     is_live = True
                 sts = ytplayer_config.get('sts')
-            if not video_info or self._downloader.params.get('youtube_include_dash_manifest', True):
+            if not video_info or \
+                    (self._downloader.params.get('youtube_include_dash_manifest', True)
+                     and (not self._downloader.params.get('videoWebPage', None) or 'token' not in video_info)):
                 # We also try looking in get_video_info since it may contain different dashmpd
                 # URL that points to a DASH manifest with possibly different itag set (some itags
                 # are missing from DASH manifest pointed by webpage's dashmpd, some - from DASH
@@ -1476,8 +1478,9 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                     if sts:
                         query['sts'] = sts
                     el_type = '&el=%s' % el
-                    video_info_webpage = self._downloader.params[el_type] if el_type in self._downloader.params else None
-                    if ('videoWebPage' not in self._downloader.params) or (not self._downloader.params['videoWebPage']):
+                    video_info_webpage = self._downloader.params[
+                        el_type] if el_type in self._downloader.params else None
+                    if not video_info_webpage:
                         video_info_webpage = self._download_webpage(
                             '%s://www.youtube.com/get_video_info' % proto,
                             video_id, note=False,
