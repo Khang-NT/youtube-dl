@@ -90,7 +90,7 @@ from .azmedien import (
 )
 from .baidu import BaiduVideoIE
 from .bambuser import BambuserIE, BambuserChannelIE
-from .bandcamp import BandcampIE, BandcampAlbumIE
+from .bandcamp import BandcampIE, BandcampAlbumIE, BandcampWeeklyIE
 from .bbc import (
     BBCCoUkIE,
     BBCCoUkArticleIE,
@@ -98,7 +98,10 @@ from .bbc import (
     BBCCoUkPlaylistIE,
     BBCIE,
 )
-from .beampro import BeamProLiveIE
+from .beampro import (
+    BeamProLiveIE,
+    BeamProVodIE,
+)
 from .beeg import BeegIE
 from .behindkink import BehindKinkIE
 from .bellmedia import BellMediaIE
@@ -389,7 +392,6 @@ from .globo import (
 from .go import GoIE
 from .go90 import Go90IE
 from .godtube import GodTubeIE
-from .godtv import GodTVIE
 from .golem import GolemIE
 from .googledrive import GoogleDriveIE
 from .googleplus import GooglePlusIE
@@ -634,7 +636,10 @@ from .neteasemusic import (
     NetEaseMusicProgramIE,
     NetEaseMusicDjRadioIE,
 )
-from .newgrounds import NewgroundsIE
+from .newgrounds import (
+    NewgroundsIE,
+    NewgroundsPlaylistIE,
+)
 from .newstube import NewstubeIE
 from .nextmedia import (
     NextMediaIE,

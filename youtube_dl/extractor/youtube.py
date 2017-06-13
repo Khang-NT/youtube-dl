@@ -1353,10 +1353,16 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             start_time = parse_duration(time_point)
             if start_time is None:
                 continue
+            if start_time > duration:
+                break
             end_time = (duration if next_num == len(chapter_lines)
                         else parse_duration(chapter_lines[next_num][1]))
             if end_time is None:
                 continue
+            if end_time > duration:
+                end_time = duration
+            if start_time > end_time:
+                break
             chapter_title = re.sub(
                 r'<a[^>]+>[^<]+</a>', '', chapter_line).strip(' \t-')
             chapter_title = re.sub(r'\s+', ' ', chapter_title)
@@ -1723,12 +1729,8 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                 format_id = url_data['itag'][0]
                 url = url_data['url'][0]
 
-                if 'sig' in url_data:
-                    url += '&signature=' + url_data['sig'][0]
-                elif 's' in url_data:
-                    encrypted_sig = url_data['s'][0]
+                if 's' in url_data or self._downloader.params.get('youtube_include_dash_manifest', True):
                     ASSETS_RE = r'"assets":.+?"js":\s*("[^"]+")'
-
                     jsplayer_url_json = self._search_regex(
                         ASSETS_RE,
                         embed_webpage if age_gate else video_webpage,
@@ -1748,6 +1750,11 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                             r'ytplayer\.config.*?"url"\s*:\s*("[^"]+")',
                             video_webpage, 'age gate player URL')
                         player_url = json.loads(player_url_json)
+
+                if 'sig' in url_data:
+                    url += '&signature=' + url_data['sig'][0]
+                elif 's' in url_data:
+                    encrypted_sig = url_data['s'][0]
 
                     if self._downloader.params.get('verbose'):
                         if player_url is None:

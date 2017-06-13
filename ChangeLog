@@ -1,7 +1,70 @@
-version <unreleased>
+version 2017.06.12
+
+Core
+* [utils] Handle compat_HTMLParseError in extract_attributes (#13349)
++ [compat] Introduce compat_HTMLParseError
+* [utils] Improve unified_timestamp
+* [extractor/generic] Ensure format id is unicode string
+* [extractor/common] Return unicode string from _match_id
++ [YoutubeDL] Sanitize more fields (#13313)
 
 Extractors
++ [xfileshare] Add support for rapidvideo.tv (#13348)
+* [xfileshare] Modernize and pass Referer
++ [rutv] Add support for testplayer.vgtrk.com (#13347)
++ [newgrounds] Extract more metadata (#13232)
++ [newgrounds:playlist] Add support for playlists (#10611)
+* [newgrounds] Improve formats and uploader extraction (#13346)
+* [msn] Fix formats extraction
+* [turbo] Ensure format id is string
+* [sexu] Ensure height is int
+* [jove] Ensure comment count is int
+* [golem] Ensure format id is string
+* [gfycat] Ensure filesize is int
+* [foxgay] Ensure height is int
+* [flickr] Ensure format id is string
+* [sohu] Fix numeric fields
+* [safari] Improve authentication detection (#13319)
+* [liveleak] Ensure height is int (#13313)
+* [streamango] Make title optional (#13292)
+* [rtlnl] Improve URL regular expression (#13295)
+* [tvplayer] Fix extraction (#13291)
+
+
+version 2017.06.05
+
+Core
+* [YoutubeDL] Don't emit ANSI escape codes on Windows (#13270)
+
+Extractors
++ [bandcamp:weekly] Add support for bandcamp weekly (#12758)
+* [pornhub:playlist] Fix extraction (#13281)
+- [godtv] Remove extractor (#13175)
+* [safari] Fix typo (#13252)
+* [youtube] Improve chapters extraction (#13247)
+* [1tv] Lower preference for HTTP formats (#13246)
+* [francetv] Relax URL regular expression
+* [drbonanza] Fix extraction (#13231)
+* [packtpub] Fix authentication (#13240)
+
+
+version 2017.05.29
+
+Extractors
+* [youtube] Fix DASH MPD extraction for videos with non-encrypted format URLs
+  (#13211)
+* [xhamster] Fix uploader and like/dislike count extraction (#13216))
++ [xhamster] Extract categories (#11728)
++ [abcnews] Add support for embed URLs (#12851)
+* [gaskrank] Fix extraction (#12493)
+* [medialaan] Fix videos with missing videoUrl (#12774)
+* [dvtv] Fix playlist support
++ [dvtv] Add support for DASH and HLS formats (#3063)
++ [beam:vod] Add support for beam.pro/mixer.com VODs (#13032))
+* [cbsinteractive] Relax URL regular expression (#13213)
+* [adn] Fix formats extraction
 + [youku] Extract more metadata (#10433)
+* [cbsnews] Fix extraction (#13205)
 
 
 version 2017.05.26
