@@ -1380,6 +1380,12 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             'http' if self._downloader.params.get('prefer_insecure', False)
             else 'https')
 
+        def exists_param(p):
+            return p in self._downloader.params
+
+        def get_param(p):
+            return self._downloader.params[p] if exists_param(p) else None
+
         start_time = None
         end_time = None
         parsed_url = compat_urllib_parse_urlparse(url)
@@ -1400,7 +1406,7 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
 
         # Get video webpage
         url = proto + '://www.youtube.com/watch?v=%s&gl=US&hl=en&has_verified=1&bpctr=9999999999' % video_id
-        video_webpage = self._downloader.params['videoWebPage'] if 'videoWebPage' in self._downloader.params else None
+        video_webpage = get_param('videoWebPage')
         if video_webpage is None:
             video_webpage = self._download_webpage(url, video_id)
 
@@ -1445,7 +1451,11 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             video_info = None
             sts = None
             # Try looking directly into the video webpage
-            ytplayer_config = self._get_ytplayer_config(video_id, video_webpage)
+            ytplayer_config = get_param('ytplayer_config')
+            if ytplayer_config:
+                ytplayer_config = self._parse_json(uppercase_escape(ytplayer_config), video_id, fatal=False)
+            if not ytplayer_config:
+                ytplayer_config = self._get_ytplayer_config(video_id, video_webpage)
             if ytplayer_config:
                 args = ytplayer_config['args']
                 if args.get('url_encoded_fmt_stream_map'):
@@ -1461,9 +1471,7 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                 if args.get('livestream') == '1' or args.get('live_playback') == 1:
                     is_live = True
                 sts = ytplayer_config.get('sts')
-            if not video_info or \
-                    (self._downloader.params.get('youtube_include_dash_manifest', True)
-                     and (not self._downloader.params.get('videoWebPage', None) or 'token' not in video_info)):
+            if not video_info or self._downloader.params.get('youtube_include_dash_manifest', True):
                 # We also try looking in get_video_info since it may contain different dashmpd
                 # URL that points to a DASH manifest with possibly different itag set (some itags
                 # are missing from DASH manifest pointed by webpage's dashmpd, some - from DASH
@@ -1484,8 +1492,7 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                     if sts:
                         query['sts'] = sts
                     el_type = '&el=%s' % el
-                    video_info_webpage = self._downloader.params[
-                        el_type] if el_type in self._downloader.params else None
+                    video_info_webpage = get_param(el_type)
                     if not video_info_webpage:
                         video_info_webpage = self._download_webpage(
                             '%s://www.youtube.com/get_video_info' % proto,
