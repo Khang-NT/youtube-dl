@@ -67,6 +67,8 @@
  - **arte.tv:info**
  - **arte.tv:magazine**
  - **arte.tv:playlist**
+ - **AsianCrush**
+ - **AsianCrushPlaylist**
  - **AtresPlayer**
  - **ATTTechChannel**
  - **ATVAt**
@@ -642,6 +644,7 @@
  - **RadioJavan**
  - **Rai**
  - **RaiPlay**
+ - **RaiPlayLive**
  - **RBMARadio**
  - **RDS**: RDS.ca
  - **RedBullTV**
@@ -686,6 +689,7 @@
  - **rutube:person**: Rutube person videos
  - **RUTV**: RUTV.RU
  - **Ruutu**
+ - **Ruv**
  - **safari**: safaribooksonline.com online video
  - **safari:api**
  - **safari:course**: safaribooksonline.com online courses
@@ -975,7 +979,7 @@
  - **WSJArticle**
  - **XBef**
  - **XboxClips**
- - **XFileShare**: XFileShare based sites: DaClips, FileHoot, GorillaVid, MovPod, PowerWatch, Rapidvideo.ws, TheVideoBee, Vidto, Streamin.To, XVIDSTAGE, Vid ABC, VidBom, vidlo, RapidVideo.TV
+ - **XFileShare**: XFileShare based sites: DaClips, FileHoot, GorillaVid, MovPod, PowerWatch, Rapidvideo.ws, TheVideoBee, Vidto, Streamin.To, XVIDSTAGE, Vid ABC, VidBom, vidlo, RapidVideo.TV, FastVideo.me
  - **XHamster**
  - **XHamsterEmbed**
  - **xiami:album**: 虾米音乐 - 专辑

@@ -71,6 +71,10 @@ from .arte import (
     TheOperaPlatformIE,
     ArteTVPlaylistIE,
 )
+from .asiancrush import (
+    AsianCrushIE,
+    AsianCrushPlaylistIE,
+)
 from .atresplayer import AtresPlayerIE
 from .atttechchannel import ATTTechChannelIE
 from .atvat import ATVAtIE
@@ -820,6 +824,7 @@ from .radiobremen import RadioBremenIE
 from .radiofrance import RadioFranceIE
 from .rai import (
     RaiPlayIE,
+    RaiPlayLiveIE,
     RaiIE,
 )
 from .rbmaradio import RBMARadioIE
@@ -871,6 +876,7 @@ from .rutube import (
 )
 from .rutv import RUTVIE
 from .ruutu import RuutuIE
+from .ruv import RuvIE
 from .sandia import SandiaIE
 from .safari import (
     SafariIE,
