@@ -154,6 +154,7 @@
  - **chirbit**
  - **chirbit:profile**
  - **Cinchcast**
+ - **CJSW**
  - **Clipfish**
  - **cliphunter**
  - **ClipRs**
@@ -369,6 +370,7 @@
  - **Jamendo**
  - **JamendoAlbum**
  - **JeuxVideo**
+ - **Joj**
  - **Jove**
  - **jpopsuki.tv**
  - **JWPlatform**
@@ -519,6 +521,7 @@
  - **NextMedia**: 蘋果日報
  - **NextMediaActionNews**: 蘋果日報 - 動新聞
  - **NextTV**: 壹電視
+ - **Nexx**
  - **nfb**: National Film Board of Canada
  - **nfl.com**
  - **NhkVod**
@@ -768,6 +771,7 @@
  - **Tagesschau**
  - **tagesschau:player**
  - **Tass**
+ - **TastyTrade**
  - **TBS**
  - **TDSLifeway**
  - **teachertube**: teachertube.com videos
@@ -939,6 +943,7 @@
  - **vk:wallpost**
  - **vlive**
  - **vlive:channel**
+ - **vlive:playlist**
  - **Vodlocker**
  - **VODPl**
  - **VODPlatform**
@@ -995,7 +1000,6 @@
  - **XVideos**
  - **XXXYMovies**
  - **Yahoo**: Yahoo screen and movies
- - **Yam**: 蕃薯藤yam天空部落
  - **yandexmusic:album**: Яндекс.Музыка - Альбом
  - **yandexmusic:playlist**: Яндекс.Музыка - Плейлист
  - **yandexmusic:track**: Яндекс.Музыка - Трек

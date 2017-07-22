@@ -36,6 +36,10 @@ from .brightcove import (
     BrightcoveLegacyIE,
     BrightcoveNewIE,
 )
+from .nexx import (
+    NexxIE,
+    NexxEmbedIE,
+)
 from .nbc import NBCSportsVPlayerIE
 from .ooyala import OoyalaIE
 from .rutv import RUTVIE
@@ -57,6 +61,7 @@ from .dailymotion import (
     DailymotionIE,
     DailymotionCloudIE,
 )
+from .dailymail import DailyMailIE
 from .onionstudios import OnionStudiosIE
 from .viewlift import ViewLiftEmbedIE
 from .mtv import MTVServicesEmbeddedIE
@@ -91,6 +96,7 @@ from .anvato import AnvatoIE
 from .washingtonpost import WashingtonPostIE
 from .wistia import WistiaIE
 from .mediaset import MediasetIE
+from .joj import JojIE
 
 
 class GenericIE(InfoExtractor):
@@ -759,6 +765,20 @@ class GenericIE(InfoExtractor):
             },
             'add_ie': ['Dailymotion'],
         },
+        # DailyMail embed
+        {
+            'url': 'http://www.bumm.sk/krimi/2017/07/05/biztonsagi-kamera-buktatta-le-az-agg-ferfit-utlegelo-apolot',
+            'info_dict': {
+                'id': '1495629',
+                'ext': 'mp4',
+                'title': 'Care worker punches elderly dementia patient in head 11 times',
+                'description': 'md5:3a743dee84e57e48ec68bf67113199a5',
+            },
+            'add_ie': ['DailyMail'],
+            'params': {
+                'skip_download': True,
+            },
+        },
         # YouTube embed
         {
             'url': 'http://www.badzine.de/ansicht/datum/2014/06/09/so-funktioniert-die-neue-englische-badminton-liga.html',
@@ -1185,7 +1205,7 @@ class GenericIE(InfoExtractor):
             },
             'add_ie': ['Kaltura'],
         },
-        # Eagle.Platform embed (generic URL)
+        # EaglePlatform embed (generic URL)
         {
             'url': 'http://lenta.ru/news/2015/03/06/navalny/',
             # Not checking MD5 as sometimes the direct HTTP link results in 404 and HLS is used
@@ -1199,8 +1219,26 @@ class GenericIE(InfoExtractor):
                 'view_count': int,
                 'age_limit': 0,
             },
+            'params': {
+                'skip_download': True,
+            },
         },
-        # ClipYou (Eagle.Platform) embed (custom URL)
+        # referrer protected EaglePlatform embed
+        {
+            'url': 'https://tvrain.ru/lite/teleshow/kak_vse_nachinalos/namin-418921/',
+            'info_dict': {
+                'id': '582306',
+                'ext': 'mp4',
+                'title': 'Стас Намин: «Мы нарушили девственность Кремля»',
+                'thumbnail': r're:^https?://.*\.jpg$',
+                'duration': 3382,
+                'view_count': int,
+            },
+            'params': {
+                'skip_download': True,
+            },
+        },
+        # ClipYou (EaglePlatform) embed (custom URL)
         {
             'url': 'http://muz-tv.ru/play/7129/',
             # Not checking MD5 as sometimes the direct HTTP link results in 404 and HLS is used
@@ -1211,6 +1249,9 @@ class GenericIE(InfoExtractor):
                 'thumbnail': r're:^https?://.*\.jpg$',
                 'duration': 216,
                 'view_count': int,
+            },
+            'params': {
+                'skip_download': True,
             },
         },
         # Pladform embed
@@ -1512,6 +1553,22 @@ class GenericIE(InfoExtractor):
             },
             'add_ie': ['BrightcoveLegacy'],
         },
+        # Nexx embed
+        {
+            'url': 'https://www.funk.net/serien/5940e15073f6120001657956/items/593efbb173f6120001657503',
+            'info_dict': {
+                'id': '247746',
+                'ext': 'mp4',
+                'title': "Yesterday's Jam (OV)",
+                'description': 'md5:09bc0984723fed34e2581624a84e05f0',
+                'timestamp': 1492594816,
+                'upload_date': '20170419',
+            },
+            'params': {
+                'format': 'bestvideo',
+                'skip_download': True,
+            },
+        },
         # Facebook <iframe> embed
         {
             'url': 'https://www.hostblogger.de/blog/archives/6181-Auto-jagt-Betonmischer.html',
@@ -1748,6 +1805,26 @@ class GenericIE(InfoExtractor):
                 'skip_download': True,
             },
             'add_ie': [MediasetIE.ie_key()],
+        },
+        {
+            # JOJ.sk embeds
+            'url': 'https://www.noviny.sk/slovensko/238543-slovenskom-sa-prehnala-vlna-silnych-burok',
+            'info_dict': {
+                'id': '238543-slovenskom-sa-prehnala-vlna-silnych-burok',
+                'title': 'Slovenskom sa prehnala vlna silných búrok',
+            },
+            'playlist_mincount': 5,
+            'add_ie': [JojIE.ie_key()],
+        },
+        {
+            # AMP embed (see https://www.ampproject.org/docs/reference/components/amp-video)
+            'url': 'https://tvrain.ru/amp/418921/',
+            'md5': 'cc00413936695987e8de148b67d14f1d',
+            'info_dict': {
+                'id': '418921',
+                'ext': 'mp4',
+                'title': 'Стас Намин: «Мы нарушили девственность Кремля»',
+            },
         },
         # {
         #     # TODO: find another test
@@ -2048,6 +2125,13 @@ class GenericIE(InfoExtractor):
         video_description = self._og_search_description(webpage, default=None)
         video_thumbnail = self._og_search_thumbnail(webpage, default=None)
 
+        info_dict.update({
+            'title': video_title,
+            'description': video_description,
+            'thumbnail': video_thumbnail,
+            'age_limit': age_limit,
+        })
+
         # Look for Brightcove Legacy Studio embeds
         bc_urls = BrightcoveLegacyIE._extract_brightcove_urls(webpage)
         if bc_urls:
@@ -2068,6 +2152,16 @@ class GenericIE(InfoExtractor):
         bc_urls = BrightcoveNewIE._extract_urls(self, webpage)
         if bc_urls:
             return self.playlist_from_matches(bc_urls, video_id, video_title, ie='BrightcoveNew')
+
+        # Look for Nexx embeds
+        nexx_urls = NexxIE._extract_urls(webpage)
+        if nexx_urls:
+            return self.playlist_from_matches(nexx_urls, video_id, video_title, ie=NexxIE.ie_key())
+
+        # Look for Nexx iFrame embeds
+        nexx_embed_urls = NexxEmbedIE._extract_urls(webpage)
+        if nexx_embed_urls:
+            return self.playlist_from_matches(nexx_embed_urls, video_id, video_title, ie=NexxEmbedIE.ie_key())
 
         # Look for ThePlatform embeds
         tp_urls = ThePlatformIE._extract_urls(webpage)
@@ -2140,6 +2234,12 @@ class GenericIE(InfoExtractor):
             if playlists:
                 return self.playlist_from_matches(
                     playlists, video_id, video_title, lambda p: '//dailymotion.com/playlist/%s' % p)
+
+        # Look for DailyMail embeds
+        dailymail_urls = DailyMailIE._extract_urls(webpage)
+        if dailymail_urls:
+            return self.playlist_from_matches(
+                dailymail_urls, video_id, video_title, ie=DailyMailIE.ie_key())
 
         # Look for embedded Wistia player
         wistia_url = WistiaIE._extract_url(webpage)
@@ -2436,12 +2536,12 @@ class GenericIE(InfoExtractor):
         if kaltura_url:
             return self.url_result(smuggle_url(kaltura_url, {'source_url': url}), KalturaIE.ie_key())
 
-        # Look for Eagle.Platform embeds
+        # Look for EaglePlatform embeds
         eagleplatform_url = EaglePlatformIE._extract_url(webpage)
         if eagleplatform_url:
-            return self.url_result(eagleplatform_url, EaglePlatformIE.ie_key())
+            return self.url_result(smuggle_url(eagleplatform_url, {'referrer': url}), EaglePlatformIE.ie_key())
 
-        # Look for ClipYou (uses Eagle.Platform) embeds
+        # Look for ClipYou (uses EaglePlatform) embeds
         mobj = re.search(
             r'<iframe[^>]+src="https?://(?P<host>media\.clipyou\.ru)/index/player\?.*\brecord_id=(?P<id>\d+).*"', webpage)
         if mobj is not None:
@@ -2670,7 +2770,7 @@ class GenericIE(InfoExtractor):
         rutube_urls = RutubeIE._extract_urls(webpage)
         if rutube_urls:
             return self.playlist_from_matches(
-                rutube_urls, ie=RutubeIE.ie_key())
+                rutube_urls, video_id, video_title, ie=RutubeIE.ie_key())
 
         # Look for WashingtonPost embeds
         wapo_urls = WashingtonPostIE._extract_urls(webpage)
@@ -2684,18 +2784,32 @@ class GenericIE(InfoExtractor):
             return self.playlist_from_matches(
                 mediaset_urls, video_id, video_title, ie=MediasetIE.ie_key())
 
+        # Look for JOJ.sk embeds
+        joj_urls = JojIE._extract_urls(webpage)
+        if joj_urls:
+            return self.playlist_from_matches(
+                joj_urls, video_id, video_title, ie=JojIE.ie_key())
+
+        def merge_dicts(dict1, dict2):
+            merged = {}
+            for k, v in dict1.items():
+                if v is not None:
+                    merged[k] = v
+            for k, v in dict2.items():
+                if v is None:
+                    continue
+                if (k not in merged or
+                        (isinstance(v, compat_str) and v and
+                            isinstance(merged[k], compat_str) and
+                            not merged[k])):
+                    merged[k] = v
+            return merged
+
         # Looking for http://schema.org/VideoObject
         json_ld = self._search_json_ld(
             webpage, video_id, default={}, expected_type='VideoObject')
         if json_ld.get('url'):
-            info_dict.update({
-                'title': video_title or info_dict['title'],
-                'description': video_description,
-                'thumbnail': video_thumbnail,
-                'age_limit': age_limit
-            })
-            info_dict.update(json_ld)
-            return info_dict
+            return merge_dicts(json_ld, info_dict)
 
         # Look for HTML5 media
         entries = self._parse_html5_media_entries(url, webpage, video_id, m3u8_id='hls')
@@ -2713,9 +2827,7 @@ class GenericIE(InfoExtractor):
         if jwplayer_data:
             info = self._parse_jwplayer_data(
                 jwplayer_data, video_id, require_title=False, base_url=url)
-            if not info.get('title'):
-                info['title'] = video_title
-            return info
+            return merge_dicts(info, info_dict)
 
         def check_video(vurl):
             if YoutubeIE.suitable(vurl):
