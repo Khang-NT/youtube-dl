@@ -89,10 +89,10 @@ from .utils import (
     write_string,
     YoutubeDLCookieProcessor,
     YoutubeDLHandler,
-    PhantomJSwrapper,
 )
 from .cache import Cache
 from .extractor import get_info_extractor, gen_extractor_classes, _LAZY_LOADER
+from .extractor.openload import PhantomJSwrapper
 from .downloader import get_suitable_downloader
 from .downloader.rtmp import rtmpdump_version
 from .postprocessor import (
@@ -304,6 +304,12 @@ class YoutubeDL(object):
                        otherwise prefer avconv.
     postprocessor_args: A list of additional command-line arguments for the
                         postprocessor.
+
+    The following options are used by the Youtube extractor:
+    youtube_include_dash_manifest: If True (default), DASH manifests and related
+                        data will be downloaded and processed by extractor.
+                        You can reduce network I/O by disabling it if you don't
+                        care about DASH.
     """
 
     _NUMERIC_FIELDS = set((

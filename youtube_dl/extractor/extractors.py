@@ -39,6 +39,7 @@ from .airmozilla import AirMozillaIE
 from .aljazeera import AlJazeeraIE
 from .alphaporno import AlphaPornoIE
 from .amcnetworks import AMCNetworksIE
+from .americastestkitchen import AmericasTestKitchenIE
 from .animeondemand import AnimeOnDemandIE
 from .anitube import AnitubeIE
 from .anvato import AnvatoIE
@@ -149,7 +150,10 @@ from .camdemy import (
 from .camwithher import CamWithHerIE
 from .canalplus import CanalplusIE
 from .canalc2 import Canalc2IE
-from .canvas import CanvasIE
+from .canvas import (
+    CanvasIE,
+    CanvasEenIE,
+)
 from .carambatv import (
     CarambaTVIE,
     CarambaTVPageIE,
@@ -482,6 +486,7 @@ from .jove import JoveIE
 from .joj import JojIE
 from .jwplatform import JWPlatformIE
 from .jpopsukitv import JpopsukiIE
+from .kakao import KakaoIE
 from .kaltura import KalturaIE
 from .kamcord import KamcordIE
 from .kanalplay import KanalPlayIE
