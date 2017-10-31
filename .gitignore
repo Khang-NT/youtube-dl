@@ -48,4 +48,3 @@ youtube-dl.zsh
 
 tmp/
 venv/
-test_with_downloaded_webpage.py
