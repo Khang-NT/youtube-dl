@@ -59,10 +59,7 @@ from .tnaflix import TNAFlixNetworkEmbedIE
 from .drtuber import DrTuberIE
 from .redtube import RedTubeIE
 from .vimeo import VimeoIE
-from .dailymotion import (
-    DailymotionIE,
-    DailymotionCloudIE,
-)
+from .dailymotion import DailymotionIE
 from .dailymail import DailyMailIE
 from .onionstudios import OnionStudiosIE
 from .viewlift import ViewLiftEmbedIE
@@ -102,6 +99,9 @@ from .joj import JojIE
 from .megaphone import MegaphoneIE
 from .vzaar import VzaarIE
 from .channel9 import Channel9IE
+from .vshare import VShareIE
+from .mediasite import MediasiteIE
+from .springboardplatform import SpringboardPlatformIE
 
 
 class GenericIE(InfoExtractor):
@@ -1098,9 +1098,9 @@ class GenericIE(InfoExtractor):
         },
         # jwplayer rtmp
         {
-            'url': 'http://www.suffolk.edu/sjc/',
+            'url': 'http://www.suffolk.edu/sjc/live.php',
             'info_dict': {
-                'id': 'sjclive',
+                'id': 'live',
                 'ext': 'flv',
                 'title': 'Massachusetts Supreme Judicial Court Oral Arguments',
                 'uploader': 'www.suffolk.edu',
@@ -1108,7 +1108,7 @@ class GenericIE(InfoExtractor):
             'params': {
                 'skip_download': True,
             },
-            'skip': 'does not contain a video anymore',
+            'skip': 'Only has video a few mornings per month, see http://www.suffolk.edu/sjc/',
         },
         # Complex jwplayer
         {
@@ -1134,6 +1134,19 @@ class GenericIE(InfoExtractor):
             'params': {
                 'skip_download': True,
             }
+        },
+        {
+            # JWPlatform iframe
+            'url': 'https://www.mediaite.com/tv/dem-senator-claims-gary-cohn-faked-a-bad-connection-during-trump-call-to-get-him-off-the-phone/',
+            'md5': 'ca00a040364b5b439230e7ebfd02c4e9',
+            'info_dict': {
+                'id': 'O0c5JcKT',
+                'ext': 'mp4',
+                'upload_date': '20171122',
+                'timestamp': 1511366290,
+                'title': 'Dem Senator Claims Gary Cohn Faked a Bad Connection During Trump Call to Get Him Off the Phone',
+            },
+            'add_ie': [JWPlatformIE.ie_key()],
         },
         {
             # Video.js embed, multiple formats
@@ -1457,23 +1470,6 @@ class GenericIE(InfoExtractor):
                 'upload_date': '20150525',
                 'timestamp': 1432570283,
             },
-        },
-        # Dailymotion Cloud video
-        {
-            'url': 'http://replay.publicsenat.fr/vod/le-debat/florent-kolandjian,dominique-cena,axel-decourtye,laurence-abeille,bruno-parmentier/175910',
-            'md5': 'dcaf23ad0c67a256f4278bce6e0bae38',
-            'info_dict': {
-                'id': 'x2uy8t3',
-                'ext': 'mp4',
-                'title': 'Sauvons les abeilles ! - Le débat',
-                'description': 'md5:d9082128b1c5277987825d684939ca26',
-                'thumbnail': r're:^https?://.*\.jpe?g$',
-                'timestamp': 1434970506,
-                'upload_date': '20150622',
-                'uploader': 'Public Sénat',
-                'uploader_id': 'xa9gza',
-            },
-            'skip': 'File not found.',
         },
         # OnionStudios embed
         {
@@ -1921,6 +1917,43 @@ class GenericIE(InfoExtractor):
                 'title': 'Rescue Kit 14 Free Edition - Getting started',
             },
             'playlist_count': 4,
+        },
+        {
+            # vshare embed
+            'url': 'https://youtube-dl-demo.neocities.org/vshare.html',
+            'md5': '17b39f55b5497ae8b59f5fbce8e35886',
+            'info_dict': {
+                'id': '0f64ce6',
+                'title': 'vl14062007715967',
+                'ext': 'mp4',
+            }
+        },
+        {
+            'url': 'http://www.heidelberg-laureate-forum.org/blog/video/lecture-friday-september-23-2016-sir-c-antony-r-hoare/',
+            'md5': 'aecd089f55b1cb5a59032cb049d3a356',
+            'info_dict': {
+                'id': '90227f51a80c4d8f86c345a7fa62bd9a1d',
+                'ext': 'mp4',
+                'title': 'Lecture: Friday, September 23, 2016 - Sir Tony Hoare',
+                'description': 'md5:5a51db84a62def7b7054df2ade403c6c',
+                'timestamp': 1474354800,
+                'upload_date': '20160920',
+            }
+        },
+        {
+            'url': 'http://www.kidzworld.com/article/30935-trolls-the-beat-goes-on-interview-skylar-astin-and-amanda-leighton',
+            'info_dict': {
+                'id': '1731611',
+                'ext': 'mp4',
+                'title': 'Official Trailer | TROLLS: THE BEAT GOES ON!',
+                'description': 'md5:eb5f23826a027ba95277d105f248b825',
+                'timestamp': 1516100691,
+                'upload_date': '20180116',
+            },
+            'params': {
+                'skip_download': True,
+            },
+            'add_ie': [SpringboardPlatformIE.ie_key()],
         }
         # {
         #     # TODO: find another test
@@ -2171,7 +2204,7 @@ class GenericIE(InfoExtractor):
                 return self.playlist_result(self._parse_xspf(doc, video_id), video_id)
             elif re.match(r'(?i)^(?:{[^}]+})?MPD$', doc.tag):
                 info_dict['formats'] = self._parse_mpd_formats(
-                    doc, video_id,
+                    doc,
                     mpd_base_url=compat_str(full_response.geturl()).rpartition('/')[0],
                     mpd_url=url)
                 self._sort_formats(info_dict['formats'])
@@ -2247,7 +2280,10 @@ class GenericIE(InfoExtractor):
         # Look for Brightcove New Studio embeds
         bc_urls = BrightcoveNewIE._extract_urls(self, webpage)
         if bc_urls:
-            return self.playlist_from_matches(bc_urls, video_id, video_title, ie='BrightcoveNew')
+            return self.playlist_from_matches(
+                bc_urls, video_id, video_title,
+                getter=lambda x: smuggle_url(x, {'referrer': url}),
+                ie='BrightcoveNew')
 
         # Look for Nexx embeds
         nexx_urls = NexxIE._extract_urls(webpage)
@@ -2680,11 +2716,6 @@ class GenericIE(InfoExtractor):
         if senate_isvp_url:
             return self.url_result(senate_isvp_url, 'SenateISVP')
 
-        # Look for Dailymotion Cloud videos
-        dmcloud_url = DailymotionCloudIE._extract_dmcloud_url(webpage)
-        if dmcloud_url:
-            return self.url_result(dmcloud_url, 'DailymotionCloud')
-
         # Look for OnionStudios embeds
         onionstudios_url = OnionStudiosIE._extract_url(webpage)
         if onionstudios_url:
@@ -2696,9 +2727,9 @@ class GenericIE(InfoExtractor):
             return self.url_result(viewlift_url)
 
         # Look for JWPlatform embeds
-        jwplatform_url = JWPlatformIE._extract_url(webpage)
-        if jwplatform_url:
-            return self.url_result(jwplatform_url, 'JWPlatform')
+        jwplatform_urls = JWPlatformIE._extract_urls(webpage)
+        if jwplatform_urls:
+            return self.playlist_from_matches(jwplatform_urls, video_id, video_title, ie=JWPlatformIE.ie_key())
 
         # Look for Digiteka embeds
         digiteka_url = DigitekaIE._extract_url(webpage)
@@ -2878,6 +2909,27 @@ class GenericIE(InfoExtractor):
         if channel9_urls:
             return self.playlist_from_matches(
                 channel9_urls, video_id, video_title, ie=Channel9IE.ie_key())
+
+        vshare_urls = VShareIE._extract_urls(webpage)
+        if vshare_urls:
+            return self.playlist_from_matches(
+                vshare_urls, video_id, video_title, ie=VShareIE.ie_key())
+
+        # Look for Mediasite embeds
+        mediasite_urls = MediasiteIE._extract_urls(webpage)
+        if mediasite_urls:
+            entries = [
+                self.url_result(smuggle_url(
+                    compat_urlparse.urljoin(url, mediasite_url),
+                    {'UrlReferrer': url}), ie=MediasiteIE.ie_key())
+                for mediasite_url in mediasite_urls]
+            return self.playlist_result(entries, video_id, video_title)
+
+        springboardplatform_urls = SpringboardPlatformIE._extract_urls(webpage)
+        if springboardplatform_urls:
+            return self.playlist_from_matches(
+                springboardplatform_urls, video_id, video_title,
+                ie=SpringboardPlatformIE.ie_key())
 
         def merge_dicts(dict1, dict2):
             merged = {}

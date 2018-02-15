@@ -67,7 +67,7 @@ class VKBaseIE(InfoExtractor):
 
         login_page = self._download_webpage(
             'https://login.vk.com/?act=login', None,
-            note='Logging in as %s' % username,
+            note='Logging in',
             data=urlencode_postdata(login_form))
 
         if re.search(r'onLoginFailed', login_page):
@@ -318,9 +318,14 @@ class VKIE(VKBaseIE):
                 'You are trying to log in from an unusual location. You should confirm ownership at vk.com to log in with this IP.',
                 expected=True)
 
+        ERROR_COPYRIGHT = 'Video %s has been removed from public access due to rightholder complaint.'
+
         ERRORS = {
             r'>Видеозапись .*? была изъята из публичного доступа в связи с обращением правообладателя.<':
-            'Video %s has been removed from public access due to rightholder complaint.',
+            ERROR_COPYRIGHT,
+
+            r'>The video .*? was removed from public access by request of the copyright holder.<':
+            ERROR_COPYRIGHT,
 
             r'<!>Please log in or <':
             'Video %s is only available for registered users, '
@@ -414,7 +419,7 @@ class VKIE(VKBaseIE):
 
         view_count = str_to_int(self._search_regex(
             r'class=["\']mv_views_count[^>]+>\s*([\d,.]+)',
-            info_page, 'view count', fatal=False))
+            info_page, 'view count', default=None))
 
         formats = []
         for format_id, format_url in data.items():

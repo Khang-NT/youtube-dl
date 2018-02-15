@@ -175,10 +175,23 @@ class AfreecaTVIE(InfoExtractor):
     def _real_extract(self, url):
         video_id = self._match_id(url)
 
+        webpage = self._download_webpage(url, video_id)
+
+        station_id = self._search_regex(
+            r'nStationNo\s*=\s*(\d+)', webpage, 'station')
+        bbs_id = self._search_regex(
+            r'nBbsNo\s*=\s*(\d+)', webpage, 'bbs')
+        video_id = self._search_regex(
+            r'nTitleNo\s*=\s*(\d+)', webpage, 'title', default=video_id)
+
         video_xml = self._download_xml(
             'http://afbbs.afreecatv.com:8080/api/video/get_video_info.php',
-            video_id, query={
+            video_id, headers={
+                'Referer': 'http://vod.afreecatv.com/embed.php',
+            }, query={
                 'nTitleNo': video_id,
+                'nStationNo': station_id,
+                'nBbsNo': bbs_id,
                 'partialView': 'SKIP_ADULT',
             })
 
@@ -228,10 +241,19 @@ class AfreecaTVIE(InfoExtractor):
                     r'^(\d{8})_', key, 'upload date', default=None)
                 file_duration = int_or_none(file_element.get('duration'))
                 format_id = key if key else '%s_%s' % (video_id, file_num)
-                formats = self._extract_m3u8_formats(
-                    file_url, video_id, 'mp4', entry_protocol='m3u8_native',
-                    m3u8_id='hls',
-                    note='Downloading part %d m3u8 information' % file_num)
+                if determine_ext(file_url) == 'm3u8':
+                    formats = self._extract_m3u8_formats(
+                        file_url, video_id, 'mp4', entry_protocol='m3u8_native',
+                        m3u8_id='hls',
+                        note='Downloading part %d m3u8 information' % file_num)
+                else:
+                    formats = [{
+                        'url': file_url,
+                        'format_id': 'http',
+                    }]
+                if not formats:
+                    continue
+                self._sort_formats(formats)
                 file_info = common_entry.copy()
                 file_info.update({
                     'id': format_id,

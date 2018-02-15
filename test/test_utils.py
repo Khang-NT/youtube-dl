@@ -343,6 +343,7 @@ class TestUtil(unittest.TestCase):
         self.assertEqual(unified_timestamp('Feb 7, 2016 at 6:35 pm'), 1454870100)
         self.assertEqual(unified_timestamp('2017-03-30T17:52:41Q'), 1490896361)
         self.assertEqual(unified_timestamp('Sep 11, 2013 | 5:49 AM'), 1378878540)
+        self.assertEqual(unified_timestamp('December 15, 2017 at 7:49 am'), 1513324140)
 
     def test_determine_ext(self):
         self.assertEqual(determine_ext('http://example.com/foo/bar.mp4/?download'), 'mp4')
@@ -813,6 +814,9 @@ class TestUtil(unittest.TestCase):
         inp = '''{"duration": "00:01:07"}'''
         self.assertEqual(js_to_json(inp), '''{"duration": "00:01:07"}''')
 
+        inp = '''{segments: [{"offset":-3.885780586188048e-16,"duration":39.75000000000001}]}'''
+        self.assertEqual(js_to_json(inp), '''{"segments": [{"offset":-3.885780586188048e-16,"duration":39.75000000000001}]}''')
+
     def test_js_to_json_edgecases(self):
         on = js_to_json("{abc_def:'1\\'\\\\2\\\\\\'3\"4'}")
         self.assertEqual(json.loads(on), {"abc_def": "1'\\2\\'3\"4"})
@@ -883,6 +887,13 @@ class TestUtil(unittest.TestCase):
 
         on = js_to_json('{/*comment\n*/42/*comment\n*/:/*comment\n*/42/*comment\n*/}')
         self.assertEqual(json.loads(on), {'42': 42})
+
+        on = js_to_json('{42:4.2e1}')
+        self.assertEqual(json.loads(on), {'42': 42.0})
+
+    def test_js_to_json_malformed(self):
+        self.assertEqual(js_to_json('42a1'), '42"a1"')
+        self.assertEqual(js_to_json('42a-1'), '42"a"-1')
 
     def test_extract_attributes(self):
         self.assertEqual(extract_attributes('<e x="y">'), {'x': 'y'})
