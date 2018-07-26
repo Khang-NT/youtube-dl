@@ -81,12 +81,25 @@ class NickIE(MTVServicesInfoExtractor):
 
 class NickBrIE(MTVServicesInfoExtractor):
     IE_NAME = 'nickelodeon:br'
-    _VALID_URL = r'https?://(?P<domain>(?:www\.)?nickjr|mundonick\.uol)\.com\.br/(?:programas/)?[^/]+/videos/(?:episodios/)?(?P<id>[^/?#.]+)'
+    _VALID_URL = r'''(?x)
+                    https?://
+                        (?:
+                            (?P<domain>(?:www\.)?nickjr|mundonick\.uol)\.com\.br|
+                            (?:www\.)?nickjr\.[a-z]{2}
+                        )
+                        /(?:programas/)?[^/]+/videos/(?:episodios/)?(?P<id>[^/?\#.]+)
+                    '''
     _TESTS = [{
         'url': 'http://www.nickjr.com.br/patrulha-canina/videos/210-labirinto-de-pipoca/',
         'only_matching': True,
     }, {
         'url': 'http://mundonick.uol.com.br/programas/the-loud-house/videos/muitas-irmas/7ljo9j',
+        'only_matching': True,
+    }, {
+        'url': 'http://www.nickjr.nl/paw-patrol/videos/311-ge-wol-dig-om-terug-te-zijn/',
+        'only_matching': True,
+    }, {
+        'url': 'http://www.nickjr.de/blaze-und-die-monster-maschinen/videos/f6caaf8f-e4e8-4cc1-b489-9380d6dcd059/',
         'only_matching': True,
     }]
 
@@ -198,7 +211,7 @@ class NickNightIE(NickDeIE):
 
 class NickRuIE(MTVServicesInfoExtractor):
     IE_NAME = 'nickelodeonru'
-    _VALID_URL = r'https?://(?:www\.)nickelodeon\.(?:ru|fr|es|pt|ro|hu)/[^/]+/(?:[^/]+/)*(?P<id>[^/?#&]+)'
+    _VALID_URL = r'https?://(?:www\.)nickelodeon\.(?:ru|fr|es|pt|ro|hu|com\.tr)/[^/]+/(?:[^/]+/)*(?P<id>[^/?#&]+)'
     _TESTS = [{
         'url': 'http://www.nickelodeon.ru/shows/henrydanger/videos/episodes/3-sezon-15-seriya-licenziya-na-polyot/pmomfb#playlist/7airc6',
         'only_matching': True,
@@ -219,6 +232,9 @@ class NickRuIE(MTVServicesInfoExtractor):
         'only_matching': True,
     }, {
         'url': 'http://www.nickelodeon.hu/musorok/spongyabob-kockanadrag/videok/episodes/buborekfujas-az-elszakadt-nadrag/q57iob#playlist/k6te4y',
+        'only_matching': True,
+    }, {
+        'url': 'http://www.nickelodeon.com.tr/programlar/sunger-bob/videolar/kayip-yatak/mgqbjy',
         'only_matching': True,
     }]
 

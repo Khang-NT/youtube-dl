@@ -564,7 +564,7 @@ class BrightcoveNewIE(AdobePassIE):
 
         return entries
 
-    def _parse_brightcove_metadata(self, json_data, video_id):
+    def _parse_brightcove_metadata(self, json_data, video_id, headers={}):
         title = json_data['name'].strip()
 
         formats = []
@@ -572,7 +572,8 @@ class BrightcoveNewIE(AdobePassIE):
             container = source.get('container')
             ext = mimetype2ext(source.get('type'))
             src = source.get('src')
-            if ext == 'ism' or container == 'WVM':
+            # https://support.brightcove.com/playback-api-video-fields-reference#key_systems_object
+            if ext == 'ism' or container == 'WVM' or source.get('key_systems'):
                 continue
             elif ext == 'm3u8' or container == 'M2TS':
                 if not src:
@@ -629,6 +630,14 @@ class BrightcoveNewIE(AdobePassIE):
                         'format_id': build_format_id('rtmp'),
                     })
                 formats.append(f)
+        if not formats:
+            # for sonyliv.com DRM protected videos
+            s3_source_url = json_data.get('custom_fields', {}).get('s3sourceurl')
+            if s3_source_url:
+                formats.append({
+                    'url': s3_source_url,
+                    'format_id': 'source',
+                })
 
         errors = json_data.get('errors')
         if not formats and errors:
@@ -637,6 +646,9 @@ class BrightcoveNewIE(AdobePassIE):
                 error.get('message') or error.get('error_subcode') or error['error_code'], expected=True)
 
         self._sort_formats(formats)
+
+        for f in formats:
+            f.setdefault('http_headers', {}).update(headers)
 
         subtitles = {}
         for text_track in json_data.get('text_tracks', []):
@@ -666,7 +678,10 @@ class BrightcoveNewIE(AdobePassIE):
 
     def _real_extract(self, url):
         url, smuggled_data = unsmuggle_url(url, {})
-        self._initialize_geo_bypass(smuggled_data.get('geo_countries'))
+        self._initialize_geo_bypass({
+            'countries': smuggled_data.get('geo_countries'),
+            'ip_blocks': smuggled_data.get('geo_ip_blocks'),
+        })
 
         account_id, player_id, embed, video_id = re.match(self._VALID_URL, url).groups()
 
@@ -724,4 +739,5 @@ class BrightcoveNewIE(AdobePassIE):
                     'tveToken': tve_token,
                 })
 
-        return self._parse_brightcove_metadata(json_data, video_id)
+        return self._parse_brightcove_metadata(
+            json_data, video_id, headers=headers)

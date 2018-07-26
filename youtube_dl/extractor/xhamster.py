@@ -13,6 +13,7 @@ from ..utils import (
     parse_duration,
     try_get,
     unified_strdate,
+    url_or_none,
 )
 
 
@@ -39,7 +40,7 @@ class XHamsterIE(InfoExtractor):
             'uploader': 'Ruseful2011',
             'duration': 893,
             'age_limit': 18,
-            'categories': ['Fake Hub', 'Amateur', 'MILFs', 'POV', 'Boss', 'Office', 'Oral', 'Reality', 'Sexy'],
+            'categories': ['Fake Hub', 'Amateur', 'MILFs', 'POV', 'Beauti', 'Beauties', 'Beautiful', 'Boss', 'Office', 'Oral', 'Reality', 'Sexy', 'Taking'],
         },
     }, {
         'url': 'http://xhamster.com/movies/2221348/britney_spears_sexy_booty.html?hd',
@@ -137,7 +138,8 @@ class XHamsterIE(InfoExtractor):
                     else:
                         format_url = format_item
                         filesize = None
-                    if not isinstance(format_url, compat_str):
+                    format_url = url_or_none(format_url)
+                    if not format_url:
                         continue
                     formats.append({
                         'format_id': '%s-%s' % (format_id, quality),
@@ -198,7 +200,8 @@ class XHamsterIE(InfoExtractor):
                 default='{}'),
             video_id, fatal=False)
         for format_id, format_url in sources.items():
-            if not isinstance(format_url, compat_str):
+            format_url = url_or_none(format_url)
+            if not format_url:
                 continue
             if format_url in format_urls:
                 continue
