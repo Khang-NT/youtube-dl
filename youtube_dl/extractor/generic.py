@@ -32,7 +32,6 @@ from ..utils import (
     unified_strdate,
     unsmuggle_url,
     UnsupportedError,
-    url_or_none,
     xpath_text,
 )
 from .commonprotocols import RtmpIE
@@ -48,7 +47,7 @@ from .nbc import NBCSportsVPlayerIE
 from .ooyala import OoyalaIE
 from .rutv import RUTVIE
 from .tvc import TVCIE
-from .sportbox import SportBoxEmbedIE
+from .sportbox import SportBoxIE
 from .smotri import SmotriIE
 from .myvi import MyviIE
 from .condenast import CondeNastIE
@@ -113,6 +112,8 @@ from .peertube import PeerTubeIE
 from .indavideo import IndavideoEmbedIE
 from .apa import APAIE
 from .foxnews import FoxNewsIE
+from .viqeo import ViqeoIE
+from .expressen import ExpressenIE
 
 
 class GenericIE(InfoExtractor):
@@ -2060,6 +2061,30 @@ class GenericIE(InfoExtractor):
             },
             'skip': 'TODO: fix nested playlists processing in tests',
         },
+        {
+            # Viqeo embeds
+            'url': 'https://viqeo.tv/',
+            'info_dict': {
+                'id': 'viqeo',
+                'title': 'All-new video platform',
+            },
+            'playlist_count': 6,
+        },
+        {
+            # videojs embed
+            'url': 'https://video.sibnet.ru/shell.php?videoid=3422904',
+            'info_dict': {
+                'id': 'shell',
+                'ext': 'mp4',
+                'title': 'Доставщик пиццы спросил разрешения сыграть на фортепиано',
+                'description': 'md5:89209cdc587dab1e4a090453dbaa2cb1',
+                'thumbnail': r're:^https?://.*\.jpg$',
+            },
+            'params': {
+                'skip_download': True,
+            },
+            'expected_warnings': ['Failed to download MPD manifest'],
+        },
         # {
         #     # TODO: find another test
         #     # http://schema.org/VideoObject
@@ -2611,9 +2636,9 @@ class GenericIE(InfoExtractor):
             return self.url_result(tvc_url, 'TVC')
 
         # Look for embedded SportBox player
-        sportbox_urls = SportBoxEmbedIE._extract_urls(webpage)
+        sportbox_urls = SportBoxIE._extract_urls(webpage)
         if sportbox_urls:
-            return self.playlist_from_matches(sportbox_urls, video_id, video_title, ie='SportBoxEmbed')
+            return self.playlist_from_matches(sportbox_urls, video_id, video_title, ie=SportBoxIE.ie_key())
 
         # Look for embedded XHamster player
         xhamster_urls = XHamsterEmbedIE._extract_urls(webpage)
@@ -2998,7 +3023,7 @@ class GenericIE(InfoExtractor):
                 wapo_urls, video_id, video_title, ie=WashingtonPostIE.ie_key())
 
         # Look for Mediaset embeds
-        mediaset_urls = MediasetIE._extract_urls(webpage)
+        mediaset_urls = MediasetIE._extract_urls(self, webpage)
         if mediaset_urls:
             return self.playlist_from_matches(
                 mediaset_urls, video_id, video_title, ie=MediasetIE.ie_key())
@@ -3087,12 +3112,22 @@ class GenericIE(InfoExtractor):
             return self.playlist_from_matches(
                 foxnews_urls, video_id, video_title, ie=FoxNewsIE.ie_key())
 
-        sharevideos_urls = [mobj.group('url') for mobj in re.finditer(
+        sharevideos_urls = [sharevideos_mobj.group('url') for sharevideos_mobj in re.finditer(
             r'<iframe[^>]+?\bsrc\s*=\s*(["\'])(?P<url>(?:https?:)?//embed\.share-videos\.se/auto/embed/\d+\?.*?\buid=\d+.*?)\1',
             webpage)]
         if sharevideos_urls:
             return self.playlist_from_matches(
                 sharevideos_urls, video_id, video_title)
+
+        viqeo_urls = ViqeoIE._extract_urls(webpage)
+        if viqeo_urls:
+            return self.playlist_from_matches(
+                viqeo_urls, video_id, video_title, ie=ViqeoIE.ie_key())
+
+        expressen_urls = ExpressenIE._extract_urls(webpage)
+        if expressen_urls:
+            return self.playlist_from_matches(
+                expressen_urls, video_id, video_title, ie=ExpressenIE.ie_key())
 
         # Look for HTML5 media
         entries = self._parse_html5_media_entries(url, webpage, video_id, m3u8_id='hls')
@@ -3115,9 +3150,13 @@ class GenericIE(InfoExtractor):
         jwplayer_data = self._find_jwplayer_data(
             webpage, video_id, transform_source=js_to_json)
         if jwplayer_data:
-            info = self._parse_jwplayer_data(
-                jwplayer_data, video_id, require_title=False, base_url=url)
-            return merge_dicts(info, info_dict)
+            try:
+                info = self._parse_jwplayer_data(
+                    jwplayer_data, video_id, require_title=False, base_url=url)
+                return merge_dicts(info, info_dict)
+            except ExtractorError:
+                # See https://github.com/rg3/youtube-dl/pull/16735
+                pass
 
         # Video.js embed
         mobj = re.search(
@@ -3131,8 +3170,8 @@ class GenericIE(InfoExtractor):
                 sources = [sources]
             formats = []
             for source in sources:
-                src = url_or_none(source.get('src'))
-                if not src:
+                src = source.get('src')
+                if not src or not isinstance(src, compat_str):
                     continue
                 src = compat_urlparse.urljoin(url, src)
                 src_type = source.get('type')

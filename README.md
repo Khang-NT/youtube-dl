@@ -511,6 +511,8 @@ The basic usage is not to set any template arguments when downloading a single f
  - `timestamp` (numeric): UNIX timestamp of the moment the video became available
  - `upload_date` (string): Video upload date (YYYYMMDD)
  - `uploader_id` (string): Nickname or id of the video uploader
+ - `channel` (string): Full name of the channel the video is uploaded on
+ - `channel_id` (string): Id of the channel
  - `location` (string): Physical location where the video was filmed
  - `duration` (numeric): Length of the video in seconds
  - `view_count` (numeric): How many users have watched the video on the platform
@@ -870,7 +872,7 @@ Either prepend `https://www.youtube.com/watch?v=` or separate the ID from the op
 
 Use the `--cookies` option, for example `--cookies /path/to/cookies/file.txt`.
 
-In order to extract cookies from browser use any conforming browser extension for exporting cookies. For example, [cookies.txt](https://chrome.google.com/webstore/detail/cookiestxt/njabckikapfpffapmjgojcnbfjonfjfg) (for Chrome) or [Export Cookies](https://addons.mozilla.org/en-US/firefox/addon/export-cookies/) (for Firefox).
+In order to extract cookies from browser use any conforming browser extension for exporting cookies. For example, [cookies.txt](https://chrome.google.com/webstore/detail/cookiestxt/njabckikapfpffapmjgojcnbfjonfjfg) (for Chrome) or [cookies.txt](https://addons.mozilla.org/en-US/firefox/addon/cookies-txt/) (for Firefox).
 
 Note that the cookies file must be in Mozilla/Netscape format and the first line of the cookies file must be either `# HTTP Cookie File` or `# Netscape HTTP Cookie File`. Make sure you have correct [newline format](https://en.wikipedia.org/wiki/Newline) in the cookies file and convert newlines if necessary to correspond with your OS, namely `CRLF` (`\r\n`) for Windows and `LF` (`\n`) for Unix and Unix-like systems (Linux, macOS, etc.). `HTTP Error 400: Bad Request` when using `--cookies` is a good sign of invalid newline format.
 
@@ -1166,7 +1168,28 @@ title = self._search_regex(
 
 ### Use safe conversion functions
 
-Wrap all extracted numeric data into safe functions from `utils`: `int_or_none`, `float_or_none`. Use them for string to number conversions as well.
+Wrap all extracted numeric data into safe functions from [`youtube_dl/utils.py`](https://github.com/rg3/youtube-dl/blob/master/youtube_dl/utils.py): `int_or_none`, `float_or_none`. Use them for string to number conversions as well.
+
+Use `url_or_none` for safe URL processing.
+
+Use `try_get` for safe metadata extraction from parsed JSON.
+
+Explore [`youtube_dl/utils.py`](https://github.com/rg3/youtube-dl/blob/master/youtube_dl/utils.py) for more useful convenience functions.
+
+#### More examples
+
+##### Safely extract optional description from parsed JSON
+```python
+description = try_get(response, lambda x: x['result']['video'][0]['summary'], compat_str)
+```
+
+##### Safely extract more optional metadata
+```python
+video = try_get(response, lambda x: x['result']['video'][0], dict) or {}
+description = video.get('summary')
+duration = float_or_none(video.get('durationMs'), scale=1000)
+view_count = int_or_none(video.get('views'))
+```
 
 # EMBEDDING YOUTUBE-DL
 

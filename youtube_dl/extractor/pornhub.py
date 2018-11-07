@@ -18,6 +18,7 @@ from ..utils import (
     orderedSet,
     remove_quotes,
     str_to_int,
+    url_or_none,
 )
 
 
@@ -39,6 +40,7 @@ class PornHubIE(InfoExtractor):
             'ext': 'mp4',
             'title': 'Seductive Indian beauty strips down and fingers her pink pussy',
             'uploader': 'Babes',
+            'upload_date': '20130628',
             'duration': 361,
             'view_count': int,
             'like_count': int,
@@ -56,6 +58,7 @@ class PornHubIE(InfoExtractor):
             'ext': 'mp4',
             'title': '重庆婷婷女王足交',
             'uploader': 'Unknown',
+            'upload_date': '20150213',
             'duration': 1753,
             'view_count': int,
             'like_count': int,
@@ -64,6 +67,31 @@ class PornHubIE(InfoExtractor):
             'age_limit': 18,
             'tags': list,
             'categories': list,
+        },
+        'params': {
+            'skip_download': True,
+        },
+    }, {
+        # subtitles
+        'url': 'https://www.pornhub.com/view_video.php?viewkey=ph5af5fef7c2aa7',
+        'info_dict': {
+            'id': 'ph5af5fef7c2aa7',
+            'ext': 'mp4',
+            'title': 'BFFS - Cute Teen Girls Share Cock On the Floor',
+            'uploader': 'BFFs',
+            'duration': 622,
+            'view_count': int,
+            'like_count': int,
+            'dislike_count': int,
+            'comment_count': int,
+            'age_limit': 18,
+            'tags': list,
+            'categories': list,
+            'subtitles': {
+                'en': [{
+                    "ext": 'srt'
+                }]
+            },
         },
         'params': {
             'skip_download': True,
@@ -139,12 +167,19 @@ class PornHubIE(InfoExtractor):
 
         video_urls = []
         video_urls_set = set()
+        subtitles = {}
 
         flashvars = self._parse_json(
             self._search_regex(
                 r'var\s+flashvars_\d+\s*=\s*({.+?});', webpage, 'flashvars', default='{}'),
             video_id)
         if flashvars:
+            subtitle_url = url_or_none(flashvars.get('closedCaptionsFile'))
+            if subtitle_url:
+                subtitles.setdefault('en', []).append({
+                    'url': subtitle_url,
+                    'ext': 'srt',
+                })
             thumbnail = flashvars.get('image_url')
             duration = int_or_none(flashvars.get('video_duration'))
             media_definitions = flashvars.get('mediaDefinitions')
@@ -204,8 +239,14 @@ class PornHubIE(InfoExtractor):
                 video_urls.append((video_url, None))
                 video_urls_set.add(video_url)
 
+        upload_date = None
         formats = []
         for video_url, height in video_urls:
+            if not upload_date:
+                upload_date = self._search_regex(
+                    r'/(\d{6}/\d{2})/', video_url, 'upload data', default=None)
+                if upload_date:
+                    upload_date = upload_date.replace('/', '')
             tbr = None
             mobj = re.search(r'(?P<height>\d+)[pP]?_(?P<tbr>\d+)[kK]', video_url)
             if mobj:
@@ -221,7 +262,7 @@ class PornHubIE(InfoExtractor):
         self._sort_formats(formats)
 
         video_uploader = self._html_search_regex(
-            r'(?s)From:&nbsp;.+?<(?:a\b[^>]+\bhref=["\']/(?:user|channel)s/|span\b[^>]+\bclass=["\']username)[^>]+>(.+?)<',
+            r'(?s)From:&nbsp;.+?<(?:a\b[^>]+\bhref=["\']/(?:(?:user|channel)s|model|pornstar)/|span\b[^>]+\bclass=["\']username)[^>]+>(.+?)<',
             webpage, 'uploader', fatal=False)
 
         view_count = self._extract_count(
@@ -245,6 +286,7 @@ class PornHubIE(InfoExtractor):
         return {
             'id': video_id,
             'uploader': video_uploader,
+            'upload_date': upload_date,
             'title': title,
             'thumbnail': thumbnail,
             'duration': duration,
@@ -256,6 +298,7 @@ class PornHubIE(InfoExtractor):
             'age_limit': 18,
             'tags': tags,
             'categories': categories,
+            'subtitles': subtitles,
         }
 
 
@@ -312,7 +355,7 @@ class PornHubPlaylistIE(PornHubPlaylistBaseIE):
 
 
 class PornHubUserVideosIE(PornHubPlaylistBaseIE):
-    _VALID_URL = r'https?://(?:[^/]+\.)?pornhub\.com/(?:user|channel)s/(?P<id>[^/]+)/videos'
+    _VALID_URL = r'https?://(?:[^/]+\.)?pornhub\.com/(?:(?:user|channel)s|model|pornstar)/(?P<id>[^/]+)/videos'
     _TESTS = [{
         'url': 'http://www.pornhub.com/users/zoe_ph/videos/public',
         'info_dict': {
@@ -343,6 +386,12 @@ class PornHubUserVideosIE(PornHubPlaylistBaseIE):
         'only_matching': True,
     }, {
         'url': 'http://www.pornhub.com/users/zoe_ph/videos/public',
+        'only_matching': True,
+    }, {
+        'url': 'https://www.pornhub.com/model/jayndrea/videos/upload',
+        'only_matching': True,
+    }, {
+        'url': 'https://www.pornhub.com/pornstar/jenny-blighe/videos/upload',
         'only_matching': True,
     }]
 
