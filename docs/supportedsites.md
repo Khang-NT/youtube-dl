@@ -28,6 +28,7 @@
  - **acast:channel**
  - **AddAnime**
  - **ADN**: Anime Digital Network
+ - **AdobeConnect**
  - **AdobeTV**
  - **AdobeTVChannel**
  - **AdobeTVShow**
@@ -44,9 +45,8 @@
  - **AmericasTestKitchen**
  - **anderetijden**: npo.nl, ntr.nl, omroepwnl.nl, zapp.nl and npo3.nl
  - **AnimeOnDemand**
- - **anitube.se**
  - **Anvato**
- - **AnySex**
+ - **aol.com**
  - **APA**
  - **Aparat**
  - **AppleConnect**
@@ -103,6 +103,7 @@
  - **Bellator**
  - **BellMedia**
  - **Bet**
+ - **bfi:player**
  - **Bigflix**
  - **Bild**: Bild.de
  - **BiliBili**
@@ -200,6 +201,7 @@
  - **CSpan**: C-SPAN
  - **CtsNews**: 華視新聞
  - **CTVNews**
+ - **cu.ntv.co.jp**: Nippon Television Network
  - **Culturebox**
  - **CultureUnplugged**
  - **curiositystream**
@@ -347,7 +349,6 @@
  - **Groupon**
  - **Hark**
  - **hbo**
- - **hbo:episode**
  - **HearThisAt**
  - **Heise**
  - **HellPorno**
@@ -361,6 +362,7 @@
  - **hitbox**
  - **hitbox:live**
  - **HitRecord**
+ - **hketv**: 香港教育局教育電視 (HKETV) Educational Television, Hong Kong Educational Bureau
  - **HornBunny**
  - **HotNewHipHop**
  - **hotstar**
@@ -386,6 +388,7 @@
  - **IndavideoEmbed**
  - **InfoQ**
  - **Instagram**
+ - **instagram:tag**: Instagram hashtag search
  - **instagram:user**: Instagram user profile
  - **Internazionale**
  - **InternetVideoArchive**
@@ -456,6 +459,7 @@
  - **LineTV**
  - **linkedin:learning**
  - **linkedin:learning:course**
+ - **LinuxAcademy**
  - **LiTV**
  - **LiveLeak**
  - **LiveLeakEmbed**
@@ -474,6 +478,7 @@
  - **mailru:music**: Музыка@Mail.Ru
  - **mailru:music:search**: Музыка@Mail.Ru
  - **MakerTV**
+ - **MallTV**
  - **mangomolo:live**
  - **mangomolo:video**
  - **ManyVids**
@@ -486,6 +491,8 @@
  - **Medialaan**
  - **Mediaset**
  - **Mediasite**
+ - **MediasiteCatalog**
+ - **MediasiteNamedCatalog**
  - **Medici**
  - **megaphone.fm**: megaphone.fm embedded players
  - **Meipai**: 美拍
@@ -544,6 +551,7 @@
  - **MyVisionTV**
  - **n-tv.de**
  - **natgeo:video**
+ - **NationalGeographicTV**
  - **Naver**
  - **NBA**
  - **NBC**
@@ -617,6 +625,7 @@
  - **NRKTVEpisodes**
  - **NRKTVSeason**
  - **NRKTVSeries**
+ - **NRLTV**
  - **ntv.ru**
  - **Nuvid**
  - **NYTimes**
@@ -626,7 +635,6 @@
  - **OdaTV**
  - **Odnoklassniki**
  - **OktoberfestTV**
- - **on.aol.com**
  - **OnDemandKorea**
  - **onet.pl**
  - **onet.tv**
@@ -667,6 +675,8 @@
  - **Piksel**
  - **Pinkbike**
  - **Pladform**
+ - **Platzi**
+ - **PlatziCourse**
  - **play.fm**
  - **PlayPlusTV**
  - **PlaysTV**
@@ -693,7 +703,6 @@
  - **PornoXO**
  - **PornTube**
  - **PressTV**
- - **PrimeShareTV**
  - **PromptFile**
  - **prosiebensat1**: ProSiebenSat.1 Digital
  - **puhutv**
@@ -713,7 +722,7 @@
  - **radio.de**
  - **radiobremen**
  - **radiocanada**
- - **RadioCanadaAudioVideo**
+ - **radiocanada:audiovideo**
  - **radiofrance**
  - **RadioJavan**
  - **Rai**
@@ -760,7 +769,6 @@
  - **RTVS**
  - **Rudo**
  - **RUHD**
- - **RulePorn**
  - **rutube**: Rutube videos
  - **rutube:channel**: Rutube channels
  - **rutube:embed**: Rutube embedded videos
@@ -774,6 +782,7 @@
  - **safari:api**
  - **safari:course**: safaribooksonline.com online courses
  - **SAKTV**
+ - **SaltTV**
  - **Sapo**: SAPO Vídeos
  - **savefrom.net**
  - **SBS**: sbs.com.au
@@ -823,6 +832,7 @@
  - **southpark.nl**
  - **southparkstudios.dk**
  - **SpankBang**
+ - **SpankBangPlaylist**
  - **Spankwire**
  - **Spiegel**
  - **Spiegel:Article**: Articles on spiegel.de
@@ -845,6 +855,7 @@
  - **StreamCZ**
  - **StreetVoice**
  - **StretchInternet**
+ - **stv:player**
  - **SunPorno**
  - **SVT**
  - **SVTPage**
@@ -866,6 +877,7 @@
  - **teachertube:user:collection**: teachertube.com user and collection videos
  - **TeachingChannel**
  - **Teamcoco**
+ - **TeamTreeHouse**
  - **TechTalks**
  - **techtv.mit.edu**
  - **ted**
@@ -909,6 +921,7 @@
  - **ToypicsUser**: Toypics user profile
  - **TrailerAddict** (Currently broken)
  - **Trilulilu**
+ - **TruNews**
  - **TruTV**
  - **Tube8**
  - **TubiTv**
@@ -1002,7 +1015,6 @@
  - **video.mit.edu**
  - **VideoDetective**
  - **videofy.me**
- - **VideoMega**
  - **videomore**
  - **videomore:season**
  - **videomore:video**
@@ -1053,7 +1065,6 @@
  - **Voot**
  - **VoxMedia**
  - **VoxMediaVolume**
- - **Vporn**
  - **vpro**: npo.nl, ntr.nl, omroepwnl.nl, zapp.nl and npo3.nl
  - **Vrak**
  - **VRT**: deredactie.be, sporza.be, cobra.be and cobra.canvas.be
@@ -1067,6 +1078,7 @@
  - **VVVVID**
  - **VyboryMos**
  - **Vzaar**
+ - **Wakanim**
  - **Walla**
  - **WalyTV**
  - **washingtonpost**
@@ -1115,10 +1127,13 @@
  - **XVideos**
  - **XXXYMovies**
  - **Yahoo**: Yahoo screen and movies
+ - **yahoo:gyao**
+ - **yahoo:gyao:player**
  - **YandexDisk**
  - **yandexmusic:album**: Яндекс.Музыка - Альбом
  - **yandexmusic:playlist**: Яндекс.Музыка - Плейлист
  - **yandexmusic:track**: Яндекс.Музыка - Трек
+ - **YandexVideo**
  - **YapFiles**
  - **YesJapan**
  - **yinyuetai:video**: 音悦Tai
